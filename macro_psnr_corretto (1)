@@ -1,0 +1,37 @@
+//PSNR (tutte le immagini devono essere in 8 bit e con bianco =255)
+
+macro "Difference"{
+	setBatchMode(true);
+	inputImage = getImageID();
+	width = getWidth();
+	height = getHeight();
+	mse = 0;
+	sum = 0;
+	nome= "H09_estGT.tiff"; //inserire nome della immagine GT
+	
+	for (j=0; j<height; j++){
+		for(i=0; i<width; i++){
+				a = getPixel(i,j);
+				selectImage(nome); 
+				b = getPixel(i,j);
+				diff=a-b;
+				sum = sum + Math.pow(diff, 2) ;
+				
+				selectImage(inputImage);
+								
+		}
+	}
+
+	mse = sum/(width*height);
+	print(nome);
+	
+	print("sum=",sum);
+	print("mse=",mse);
+
+	flag = Math.pow(255,2)/mse;
+	psnr = 10*(Math.log10(flag));
+	
+	print ("PSNR (dB)=",psnr);
+	setBatchMode(false);
+}
+

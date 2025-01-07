@@ -1,0 +1,50 @@
+//F-MASURE (tutte le immagini devono essere in 8 bit e con bianco =255)
+
+macro "F-measure"{
+	setBatchMode(true);
+	inputImage = getImageID();
+	width = getWidth();
+	height = getHeight();
+	nome= "H07_estGT.tiff";  //inserire nome della immagine GT
+	tp = 0; //true foreground
+	
+	fp = 0; //foreground che dovrebbe essere background
+	fn = 0; //background che dovrebbe essere foreground
+	tn=0
+	p = 0;
+	p_vero = 0;
+	prec = 0;
+	rec = 0;
+	f_mes = 0;
+
+	for (j=0; j<height; j++){
+		for(i=0; i<width; i++){
+			p = getPixel(i,j);
+			selectImage(nome);
+			p_vero = getPixel(i,j);
+			if (p == 0){ // p appartiene a foreground
+				if (p_vero == 0){
+					tp++;
+				}
+				else {
+					fp++;
+				}
+			}
+			else{ //p appartiene a background cioè p=255
+				if (p_vero == 0){
+					fn++;
+				}
+				else{ // significa p=255=p_vero
+					tn++;
+				}
+			}
+			selectImage(inputImage);
+		}
+	} //fine for
+	
+	precision = tp/(tp+fp);
+	recall = tp/(tp+fn);
+	f_mes = 2*(precision*recall)/(precision+recall)
+	print("F-measure = ",f_mes);
+	setBatchMode(false);	
+}
